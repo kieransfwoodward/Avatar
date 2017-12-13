@@ -35,6 +35,8 @@ import android.widget.TextView;
 
 import com.kieranwoodward.gizmato.R;
 
+import net.grandcentrix.tray.AppPreferences;
+
 
 /**
  * Created by kieranwoodward on 02/10/2017.
