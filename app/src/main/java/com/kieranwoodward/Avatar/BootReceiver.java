@@ -1,4 +1,4 @@
-package com.kieranwoodward.GismatoWithoutScreens;
+package com.kieranwoodward.Avatar;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

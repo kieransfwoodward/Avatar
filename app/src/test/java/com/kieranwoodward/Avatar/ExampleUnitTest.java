@@ -1,4 +1,4 @@
-package com.kieranwoodward.GismatoWithoutScreens;
+package com.kieranwoodward.Avatar;
 
 import org.junit.Test;
 

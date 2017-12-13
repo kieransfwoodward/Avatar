@@ -1,4 +1,4 @@
-package com.kieranwoodward.GismatoWithoutScreens;
+package com.kieranwoodward.Avatar;
 
 import android.app.Activity;
 import android.app.AlarmManager;
