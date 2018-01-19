@@ -4,37 +4,65 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-   >
+    >
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/topblue"
+        android:text="Hide avatar"
+        android:textColor="@color/darkGrey" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/grey"
         android:text="Icon transparency"
-    android:background="@drawable/topblue"/>
+        android:textColor="@color/darkGrey" />
 
     <SeekBar
         android:id="@+id/seekbar"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
         android:layout_width="match_parent"
         android:layout_height="100px"
-        android:background="@color/colorPrimary"
+        android:background="@color/grey"
         android:max="9"
         android:progress="3"
-        android:progressTint="@android:color/white"
-        android:thumbTint="@android:color/white"/>
+        android:progressTint="@color/darkGrey"
+        android:thumbTint="@color/darkGrey" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/grey"
         android:text="Stop alerts"
-        android:background="@color/colorPrimary"/>
+        android:textColor="@color/darkGrey" />
 
     <CheckBox
         android:id="@+id/checkbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:buttonTint="@android:color/white"/>
+        android:background="@color/grey"
+        android:buttonTint="@color/darkGrey" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/grey"
+        android:text="Size"
+        android:textColor="@color/darkGrey" />
+
+    <Spinner
+        android:id="@+id/spinner2"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/bottomblue"
+        android:popupBackground="@color/grey"
+        android:textColor="@color/darkGrey"
+        android:spinnerMode="dropdown"
+        />
 
     <ImageView
         android:id="@+id/avatarView"

@@ -19,23 +19,29 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.kieranwoodward.gizmato.R;
 
 import net.grandcentrix.tray.AppPreferences;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -72,10 +78,20 @@ public class Avatar extends Service {
     int state1 = 1;
     Intent intent;
     int[] images;
+    boolean vis = true;
+    String option2;
 
-public Avatar(){
+    public Avatar(){
 
-}
+    }
+
+    public void OnCreate(){
+        startWindow();
+    }
+
+
+
+
 
     public Avatar(Context con, int[] imgs){
         context = con;
@@ -86,6 +102,7 @@ public Avatar(){
         option1 = appPreferences.getString("option1", "monster");
         checked = appPreferences.getInt("checked", 0);
         state1 = appPreferences.getInt("state", 1);
+        option2 = appPreferences.getString("option2", "Medium");
 
 
         //Check version of Android, if 23 or less ask for overlay permission
@@ -128,11 +145,11 @@ public Avatar(){
     public void setState(int i){
         state1 = i;
         if (state1 > (images.length - 1)){
-            state1 = images.length -1;
+        }
+        else{
+            setIMG(img);
         }
 
-        Log.d("state1", String.valueOf(state1));
-        Log.d("image length", String.valueOf(images.length));
 
     }
 
@@ -178,6 +195,49 @@ public Avatar(){
         myview = li.inflate(R.layout.avatar, null); //View only showing the avatar
         img = (ImageView) myview.findViewById(R.id.avatarView); //ImageView within this layout
 
+        if(appPreferences.getString("option2", "Medium").equals("Medium") )
+        {
+            parameters = new WindowManager.LayoutParams(
+                    context.getResources().getDimensionPixelSize(R.dimen.fifty),  context.getResources().getDimensionPixelSize(R.dimen.fifty), WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT);
+
+
+        }
+        else if(appPreferences.getString("option2", "Medium").equals("Small") ){
+            parameters = new WindowManager.LayoutParams(
+                    context.getResources().getDimensionPixelSize(R.dimen.thirty),  context.getResources().getDimensionPixelSize(R.dimen.thirty), WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT);
+        }
+        else if(appPreferences.getString("option2", "Medium").equals("Large") ){
+            parameters = new WindowManager.LayoutParams(
+                    context.getResources().getDimensionPixelSize(R.dimen.seventy),  context.getResources().getDimensionPixelSize(R.dimen.seventy), WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT);
+        }
+        parameters.gravity = Gravity.TOP | Gravity.LEFT;
+        parameters.x = 0;
+        parameters.y = 0;
+
+        if(appPreferences.getString("option2", "Medium").equals("Medium") ){
+            img.getLayoutParams().height = context.getResources().getDimensionPixelSize(R.dimen.fifty);
+            img.getLayoutParams().width = context.getResources().getDimensionPixelSize(R.dimen.fifty);
+
+        }
+        else if(appPreferences.getString("option2", "Medium").equals("Small") ){
+            img.getLayoutParams().height = context.getResources().getDimensionPixelSize(R.dimen.thirty);
+            img.getLayoutParams().width = context.getResources().getDimensionPixelSize(R.dimen.thirty);
+
+
+        }
+        else if(appPreferences.getString("option2", "Medium").equals("Large")){
+            img.getLayoutParams().height = context.getResources().getDimensionPixelSize(R.dimen.seventy);
+            img.getLayoutParams().width = context.getResources().getDimensionPixelSize(R.dimen.seventy);
+
+
+        }
+
         setIMG(img); //set the current avatar into the image view
         myview.animate().alpha(transparency); //set the transparency chose by the user
         wm.addView(myview, parameters); //add the view into the window
@@ -192,11 +252,20 @@ public Avatar(){
     }
 
     public void hide(){
-        wm.removeView(myview);
+        if (vis == true){
+            wm.removeView(myview);
+        }
+        vis = false;
     }
 
     public void show(){
-        wm.removeView(myview);
+        if (vis == true){
+            wm.removeView(myview);
+        }
+
+        vis = true;
+
+
         setIMG(img); //set the current avatar into the image view
         myview.animate().alpha(transparency);
         wm.addView(myview, parameters); //add the view into the window
@@ -217,18 +286,58 @@ public Avatar(){
                     }
                 };
 
+                WindowManager.LayoutParams parameters1 = parameters;
+                double x1 = parameters1.x;
+                double y1 = parameters1.y;
+
+
                 if (i == 1) {
                     //Single click
+
+
                     handler.postDelayed(r, 350);
+
+
+                    if (x1 > x3) {
+                        if (y1 > y3) {
+                            if ((x1 - x3 < 15) & (y1 - y3 < 15)) { //15 is the number of pixels the x and y cordinates can change but stil be consideres a long touch not a drag
+                                if (option.equals("New Test")) { //intent to New Test screen
+
+                                    context.startActivity(intent);
+                                }
+                                doubleclick = true;
+                            }
+                        } else {
+                            if ((x1 - x3 < 15) & (y3 - y1 < 15)) {
+                                if (option.equals("New Test")) { //intent to New Test screen
+
+                                    context.startActivity(intent);
+                                }
+                                doubleclick = true;
+                            }
+                        }
+                    } else {
+                        if (y1 > y3) {
+                            if ((x3 - x1 < 15) & (y1 - y3 < 15)) {
+                                if (option.equals("New Test")) { //intent to New Test screen
+
+                                    context.startActivity(intent);
+                                }
+                                doubleclick = true;
+                            }
+                        } else {
+                            if ((x3 - x1 < 15) & (y3 - y1 < 15)) {
+                                if (option.equals("New Test")) { //intent to New Test screen
+
+                                    context.startActivity(intent);
+                                }
+                                doubleclick = true;
+                            }
+                        }
+                    }
                 } else if (i == 2) {
                     i = 0;
-                    //double click
-                    //TODO update the intents so that each option goes to the correct screen
-                    if (option.equals("New Test")) { //intent to New Test screen
-
-                        context.startActivity(intent);
-                    }
-                    doubleclick = true;
+                    // hide();
                 }
             }
         });
@@ -331,21 +440,55 @@ public Avatar(){
     //Updates the icon to different states
     private void updateIcon(int state, WindowManager wm1, View myview1) {
 
-        parameters = new WindowManager.LayoutParams(
-                100, 100, WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSLUCENT); //sets the avatar window to be smaller to just show the avatar
+        if(appPreferences.getString("option2", "Medium").equals("Medium") )
+        {
+            parameters = new WindowManager.LayoutParams(
+                    context.getResources().getDimensionPixelSize(R.dimen.fifty),  context.getResources().getDimensionPixelSize(R.dimen.fifty), WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT);
+        }
+        else if(appPreferences.getString("option2", "Medium").equals("Small") ){
+            parameters = new WindowManager.LayoutParams(
+                    context.getResources().getDimensionPixelSize(R.dimen.thirty),  context.getResources().getDimensionPixelSize(R.dimen.thirty), WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT);
+        }
+        else if(appPreferences.getString("option2", "Medium").equals("Large") ){
+            parameters = new WindowManager.LayoutParams(
+                    context.getResources().getDimensionPixelSize(R.dimen.seventy),  context.getResources().getDimensionPixelSize(R.dimen.seventy), WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT);
+        }
+
+
+        //sets the avatar window to be smaller to just show the avatar
         parameters.x = (int) lastx; //positions the avatar where it last was
         parameters.y = (int) lasty; //positions the avatar where it last was
         state1 = state;
         appPreferences.put("state", state);
         myview = li.inflate(R.layout.avatar, null); //sets layout to be just the avatar
+        img = (ImageView) myview.findViewById(R.id.avatarView);
 
 
+        if(appPreferences.getString("option2", "Medium").equals("Medium") ){
+            img.getLayoutParams().height = context.getResources().getDimensionPixelSize(R.dimen.fifty);
+            img.getLayoutParams().width = context.getResources().getDimensionPixelSize(R.dimen.fifty);
 
+        }
+        else if(appPreferences.getString("option2", "Medium").equals("Small") ){
+            img.getLayoutParams().height = context.getResources().getDimensionPixelSize(R.dimen.thirty);
+            img.getLayoutParams().width = context.getResources().getDimensionPixelSize(R.dimen.thirty);
+
+
+        }
+        else if(appPreferences.getString("option2", "Medium").equals("Large")){
+            img.getLayoutParams().height = context.getResources().getDimensionPixelSize(R.dimen.seventy);
+            img.getLayoutParams().width = context.getResources().getDimensionPixelSize(R.dimen.seventy);
+
+
+        }
 
         Drawable image = context.getResources().getDrawable(images[state1]);
-        img = (ImageView) myview.findViewById(R.id.avatarView);
         img.setImageDrawable(image);
         updateIMG(img, myview, parameters);
         myview.animate().alpha(transparency);
@@ -359,41 +502,61 @@ public Avatar(){
     //show a message above the avatar
     public void talk(String titleText, String message) {
 
-        if (appPreferences.getInt("checked", 0) == 0) { //if showing alerts
-            wm.removeView(myview);
-            doubleclick = true;
-            myview = li.inflate(R.layout.text, null); //new view to display the message
-            img = (ImageView) myview.findViewById(R.id.avatarView);
-            setIMG(img);
-            updateIMG(img, myview, parameters);
+        if (appPreferences.getInt("checked", 0) == 0 && vis == true) { //if showing alerts
+            if (appPreferences.getInt("checked", 0) == 0) { //if showing alerts
+                doubleclick = true;
+                wm.removeView(myview);
+                myview = li.inflate(R.layout.text, null); //new view to display the message
+                img = (ImageView) myview.findViewById(R.id.avatarView);
 
-            //Set the title
-            title = (TextView) myview.findViewById(R.id.title);
-            title.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-            title.setTypeface(null, Typeface.BOLD);
-            title.setText(titleText);
-            title.setTextColor(Color.WHITE);
-            title.setBackgroundResource(R.drawable.top);
-            title.setTextSize(20);
-            title.setGravity(10);
 
-            //Set the description
-            description = (TextView) myview.findViewById(R.id.description);
-            description.setText(message);
-            description.setBackgroundResource(R.drawable.bottom);
+                if (appPreferences.getString("option2", "Medium").equals("Medium")) {
+                    img.getLayoutParams().height = context.getResources().getDimensionPixelSize(R.dimen.fifty);
+                    img.getLayoutParams().width = context.getResources().getDimensionPixelSize(R.dimen.fifty);
 
-            //Make the size of the window larger to fit the text
-            parameters = new WindowManager.LayoutParams(
-                    context.getResources().getDimensionPixelSize(R.dimen.twoTen),
-                    context.getResources().getDimensionPixelSize(R.dimen.two),
-                    WindowManager.LayoutParams.TYPE_PHONE,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSLUCENT);
-            parameters.x = (int) lastx;
-            parameters.y = (int) lasty;
+                } else if (appPreferences.getString("option2", "Medium").equals("Small")) {
+                    img.getLayoutParams().height = context.getResources().getDimensionPixelSize(R.dimen.thirty);
+                    img.getLayoutParams().width = context.getResources().getDimensionPixelSize(R.dimen.thirty);
 
-            updateIMG(img, myview, parameters);
-            wm.addView(myview, parameters);
+
+                } else if (appPreferences.getString("option2", "Medium").equals("Large")) {
+                    img.getLayoutParams().height = context.getResources().getDimensionPixelSize(R.dimen.seventy);
+                    img.getLayoutParams().width = context.getResources().getDimensionPixelSize(R.dimen.seventy);
+
+
+                }
+
+                setIMG(img);
+                updateIMG(img, myview, parameters);
+
+                //Set the title
+                title = (TextView) myview.findViewById(R.id.title);
+                title.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
+                title.setTypeface(null, Typeface.BOLD);
+                title.setText(titleText);
+                title.setTextColor(Color.WHITE);
+                title.setBackgroundResource(R.drawable.top);
+                title.setTextSize(20);
+                title.setGravity(10);
+
+                //Set the description
+                description = (TextView) myview.findViewById(R.id.description);
+                description.setText(message);
+                description.setBackgroundResource(R.drawable.bottom);
+
+                //Make the size of the window larger to fit the text
+                parameters = new WindowManager.LayoutParams(
+                        context.getResources().getDimensionPixelSize(R.dimen.twoTen),
+                        context.getResources().getDimensionPixelSize(R.dimen.two),
+                        WindowManager.LayoutParams.TYPE_PHONE,
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                        PixelFormat.TRANSLUCENT);
+                parameters.x = (int) lastx;
+                parameters.y = (int) lasty;
+
+                updateIMG(img, myview, parameters);
+                wm.addView(myview, parameters);
+            }
         }
     }
 
@@ -401,19 +564,70 @@ public Avatar(){
     //Method to display the avatar avatar_settings
     private void showSettings() {
         parameters = new WindowManager.LayoutParams(
-                context.getResources().getDimensionPixelSize(R.dimen.twoTen), context.getResources().getDimensionPixelSize(R.dimen.two), WindowManager.LayoutParams.TYPE_PHONE,
+                context.getResources().getDimensionPixelSize(R.dimen.twoTen), context.getResources().getDimensionPixelSize(R.dimen.four), WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
         parameters.x = (int) lastx;
         parameters.y = (int) lasty;
         doubleclick = true;
-        View myview1 = li.inflate(R.layout.avatar_settings, null); //display the avatar_settings view
-        img = (ImageView) myview1.findViewById(R.id.avatarView);
+        myview = li.inflate(R.layout.avatar_settings, null); //display the avatar_settings view
+        img = (ImageView) myview.findViewById(R.id.avatarView);
+
+        if(appPreferences.getString("option2", "Medium").equals("Medium") ){
+            img.getLayoutParams().height = context.getResources().getDimensionPixelSize(R.dimen.fifty);
+            img.getLayoutParams().width = context.getResources().getDimensionPixelSize(R.dimen.fifty);
+
+        }
+        else if(appPreferences.getString("option2", "Medium").equals("Small") ){
+            img.getLayoutParams().height = context.getResources().getDimensionPixelSize(R.dimen.thirty);
+            img.getLayoutParams().width = context.getResources().getDimensionPixelSize(R.dimen.thirty);
+
+
+        }
+        else if(appPreferences.getString("option2", "Medium").equals("Large")){
+            img.getLayoutParams().height = context.getResources().getDimensionPixelSize(R.dimen.seventy);
+            img.getLayoutParams().width = context.getResources().getDimensionPixelSize(R.dimen.seventy);
+
+
+        }
+
         setIMG(img);
-        updateIMG(img, myview1, parameters);
+        updateIMG(img, myview, parameters);
+
+
+        Spinner spinner2 = (Spinner) myview.findViewById(R.id.spinner2);
+        ArrayAdapter<String> adapter2;
+        List<String> list2;
+
+        //Add avatar options
+        list2 = new ArrayList<>();
+        list2.add("Small");
+        list2.add("Medium");
+        list2.add("Large");
+
+        adapter2 = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, list2);
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner2.setAdapter(adapter2);
+
+        int spinnerPosition2 = adapter2.getPosition(option2);
+        spinner2.setSelection(spinnerPosition2);
+
+        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Object item = parent.getItemAtPosition(position);
+                option2 = item.toString();
+                appPreferences.put("option2", option2); //store chosen option
+
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+
 
         //Seekbar to adjust the transparency of the icon
-        SeekBar seekBar = (SeekBar) myview1.findViewById(R.id.seekbar);
+        SeekBar seekBar = (SeekBar) myview.findViewById(R.id.seekbar);
         float progress = transparency * 10;
         int progress1 = (int) progress;
         progress1 = progress1 - 1;
@@ -440,7 +654,7 @@ public Avatar(){
         });
 
         //Checkbox to silence alerts from the avatar
-        CheckBox ChkBx = (CheckBox) myview1.findViewById(R.id.checkbox);
+        CheckBox ChkBx = (CheckBox) myview.findViewById(R.id.checkbox);
         if (checked == 0) {
             appPreferences.put("checked", 0);
             ChkBx.setChecked(false); //display current choice
@@ -463,9 +677,21 @@ public Avatar(){
             }
         });
 
-        wm.addView(myview1, parameters); //display avatar_settings in the window
-    }
+        wm.addView(myview, parameters); //display avatar_settings in the window
 
+        Button hideButton = (Button) myview.findViewById(R.id.button4);
+        hideButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (vis == true){
+                    updateIcon(state1, wm, myview);
+                    wm.removeView(myview);
+
+                }
+                vis = false;
+            }
+        });
+    }
 
     //restarts the icon even when the app is closed
     @Override
@@ -495,9 +721,17 @@ public Avatar(){
         alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 100, restartServicePI);
     }
 
+
+
     @Override
     public void onDestroy() {
         wm.removeViewImmediate(myview);
         super.onDestroy();
     }
+
+
+
+
+
+
 }
