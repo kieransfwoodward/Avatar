@@ -6,8 +6,8 @@
 
 
     <gradient
-        android:startColor="@color/colorAccent"
-        android:endColor="@color/colorAccent"
+        android:startColor="@color/colorPrimaryDark"
+        android:endColor="@color/colorPrimaryDark"
         android:angle="270"/>
     <corners  android:topLeftRadius="25dp" android:topRightRadius="25dp"  />
     <padding android:bottom="3dp" android:left="10dp" android:right="10dp" android:top="10dp" />

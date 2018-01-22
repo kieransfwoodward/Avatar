@@ -132,7 +132,7 @@ public class Avatar extends Service {
 
     }
 
-    public void setDoubleTapShortcut(Intent i){
+    public void setTapShortcut(Intent i){
         intent = i;
     }
 
@@ -502,8 +502,9 @@ public class Avatar extends Service {
     //show a message above the avatar
     public void talk(String titleText, String message) {
 
-        if (appPreferences.getInt("checked", 0) == 0 && vis == true) { //if showing alerts
+        if (appPreferences.getInt("checked", 0) == 0) { //if showing alerts
             if (appPreferences.getInt("checked", 0) == 0) { //if showing alerts
+                show();
                 doubleclick = true;
                 wm.removeView(myview);
                 myview = li.inflate(R.layout.text, null); //new view to display the message
@@ -605,8 +606,8 @@ public class Avatar extends Service {
         list2.add("Medium");
         list2.add("Large");
 
-        adapter2 = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, list2);
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter2 = new ArrayAdapter<String>(context, R.layout.spinner_item, list2);
+        adapter2.setDropDownViewResource(R.layout.spinner_item);
         spinner2.setAdapter(adapter2);
 
         int spinnerPosition2 = adapter2.getPosition(option2);
