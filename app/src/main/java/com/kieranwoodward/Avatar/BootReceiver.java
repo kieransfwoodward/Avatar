@@ -17,7 +17,5 @@ public class BootReceiver extends BroadcastReceiver {
         Intent pushIntent = new Intent(context, Avatar.class);
         context.startService(pushIntent);
 
-
-
     }
 }

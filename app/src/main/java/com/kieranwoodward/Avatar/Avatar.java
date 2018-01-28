@@ -171,6 +171,22 @@ public class Avatar extends Service {
 
         setIMG(img);
         updateIMG(img, myview, parameters);
+
+        if(appPreferences.getString("option2", "Medium").equals("Medium") ){
+            height = height + context.getResources().getDimensionPixelSize(R.dimen.fifty);
+
+        }
+        else if(appPreferences.getString("option2", "Medium").equals("Small") ){
+
+            height = height +  context.getResources().getDimensionPixelSize(R.dimen.thirty);
+
+        }
+        else if(appPreferences.getString("option2", "Medium").equals("Large")){
+            height = height +  context.getResources().getDimensionPixelSize(R.dimen.seventy);
+
+
+        }
+
         parameters = new WindowManager.LayoutParams(
                 width,
                 height,
@@ -247,6 +263,23 @@ public class Avatar extends Service {
 
     //Method to set the correct avatar icon
     private void setIMG(ImageView img) {
+        if(appPreferences.getString("option2", "Medium").equals("Medium") ){
+            img.getLayoutParams().height = context.getResources().getDimensionPixelSize(R.dimen.fifty);
+            img.getLayoutParams().width = context.getResources().getDimensionPixelSize(R.dimen.fifty);
+
+        }
+        else if(appPreferences.getString("option2", "Medium").equals("Small") ){
+            img.getLayoutParams().height = context.getResources().getDimensionPixelSize(R.dimen.thirty);
+            img.getLayoutParams().width = context.getResources().getDimensionPixelSize(R.dimen.thirty);
+
+
+        }
+        else if(appPreferences.getString("option2", "Medium").equals("Large")){
+            img.getLayoutParams().height = context.getResources().getDimensionPixelSize(R.dimen.seventy);
+            img.getLayoutParams().width = context.getResources().getDimensionPixelSize(R.dimen.seventy);
+
+
+        }
         Drawable image = context.getResources().getDrawable(images[state1]);
         img.setImageDrawable(image);
     }
